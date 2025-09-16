@@ -1,4 +1,4 @@
-import { IApi, IProduct, IOrder } from '../../types';
+import { IApi, IProduct, IOrderRequest, IOrderResponse } from '../../types';
 
 export class ApiService {
   private api: IApi;
@@ -9,12 +9,12 @@ export class ApiService {
 
   // Получение каталога товаров с сервера
   async fetchProducts(): Promise<IProduct[]> {
-    const response = await this.api.get<{ items: IProduct[] }>("/product/");
-    return response.items; // возвращаем массив товаров
+    const response = await this.api.get<{ items: IProduct[] }>("/product");
+    return response.items || []; // возвращаем массив товаров
   }
 
   // Отправка заказа на сервер
-  async sendOrder(orderData: IOrder): Promise<any> {
-    return this.api.post("/order/", orderData, "POST");
+  async sendOrder(order: IOrderRequest): Promise<IOrderResponse> {
+    return await this.api.post<IOrderResponse>("/order/", order);
   }
 }

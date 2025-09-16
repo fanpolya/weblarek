@@ -195,6 +195,6 @@ constructor(api: IApi) — принимает объект, реализующи
 	1.	fetchProducts(): Promise<IProduct[]>
 	•	Выполняет GET запрос на эндпоинт /product/.
 	•	Возвращает массив товаров (IProduct[]).
-	2.	sendOrder(orderData: IOrder): Promise<any>
+	2.	sendOrder(order: IOrderRequest): Promise<IOrderResponse>
 	•	Выполняет POST запрос на эндпоинт /order/.
 	•	Отправляет данные о заказе, включая информацию о покупателе (IBuyer) и выбранных товарах (IProduct[]).

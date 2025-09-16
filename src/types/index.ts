@@ -26,8 +26,16 @@ export interface IBuyer {
   address: string;         // Адрес доставки
 }
 
-// Тип объекта для отправки на сервер при оформлении заказа
-export interface IOrder {
-    buyer: IBuyer;         // Данные покупателя
-    products: IProduct[];  // Выбранные товары
+export interface IOrderRequest {
+    payment: TPayment;
+    email: string;
+    phone: string;
+    address: string;
+    total: number;
+    items: string[];
+}
+
+export interface IOrderResponse {
+    id: string;
+    total: number;
 }

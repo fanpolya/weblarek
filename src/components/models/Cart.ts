@@ -1,4 +1,4 @@
-import { IProduct } from '../../../types';
+import { IProduct } from '../../types';
 
 export class Cart {
   private items: IProduct[] = [];
@@ -7,13 +7,13 @@ export class Cart {
     return this.items;
   }
 
-  add(product: IProduct): void {
-    if (!this.has(product.id)) {
+  addItem(product: IProduct): void {
+    if (!this.hasItem(product.id)) {
       this.items.push(product);
     }
   }
 
-  remove(productId: string): void {
+  removeItem(productId: string): void {
     this.items = this.items.filter((item) => item.id !== productId);
   }
 
@@ -29,7 +29,7 @@ export class Cart {
     return this.items.length;
   }
 
-  has(productId: string): boolean {
+  hasItem(productId: string): boolean {
     return this.items.some((item) => item.id === productId);
   }
 }
