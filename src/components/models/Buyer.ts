@@ -30,10 +30,6 @@ export class Buyer {
   }
 
   getData(): IBuyer {
-    if (this._payment === null) {
-      throw new Error("Не выбран способ оплаты");
-    }
-
     return {
       payment: this._payment as TPayment,
       address: this._address,
@@ -49,31 +45,32 @@ export class Buyer {
     this._phone = '';
   }
 
-  validate(): { isValid: boolean; errors: string[] } {
-    const errors: string[] = [];
+  validate(): { isValid: boolean; errors: Record<keyof IBuyer, string> } {
+    const errors: Record<keyof IBuyer, string> = {
+      payment: '',
+      address: '',
+      email: '',
+      phone: '',
+};
 
     if (!this._payment) {
-      errors.push("Способ оплаты не выбран");
+      errors.payment = "Способ оплаты не выбран";
     }
 
     if (!this._address.trim()) {
-      errors.push("Не указан адрес");
+      errors.address = "Не указан адрес";
     }
 
     if (!this._email.trim()) {
-      errors.push("Не указан E-mail");
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this._email)) {
-      errors.push("Некорректный формат email");
-    }
+      errors.email = "Не указан E-mail";
+    } 
 
     if (!this._phone.trim()) {
-      errors.push("Не указан телефон");
-    } else if (!/^\+?[\d\s\-\(\)]{10,}$/.test(this._phone)) {
-      errors.push("Некорректный номер телефона");
-    }
+      errors.phone = "Не указан телефон";
+    } 
 
     return {
-      isValid: errors.length === 0,
+      isValid: Object.values(errors).every(error => error === ''),
       errors,
     };
   }

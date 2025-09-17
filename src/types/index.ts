@@ -26,11 +26,7 @@ export interface IBuyer {
   address: string;         // Адрес доставки
 }
 
-export interface IOrderRequest {
-    payment: TPayment;
-    email: string;
-    phone: string;
-    address: string;
+export interface IOrderRequest extends IBuyer {
     total: number;
     items: string[];
 }
