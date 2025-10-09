@@ -6,27 +6,20 @@ export class Buyer {
   private _email: string = '';
   private _phone: string = '';
 
-  setAllData(data: IBuyer): void {
-    this._payment = data.payment;
-    this._address = data.address;
-    this._email = data.email;
-    this._phone = data.phone;
+  setPayment(payment: TPayment): void {
+    this._payment = payment;
   }
 
-  set payment(value: TPayment) {
-    this._payment = value;
+  setAddress(address: string): void {
+    this._address = address;
   }
 
-  set address(value: string) {
-    this._address = value;
+  setEmail(email: string): void {
+    this._email = email;
   }
 
-  set email(value: string) {
-    this._email = value;
-  }
-
-  set phone(value: string) {
-    this._phone = value;
+  setPhone(phone: string): void {
+    this._phone = phone;
   }
 
   getData(): IBuyer {
@@ -45,29 +38,34 @@ export class Buyer {
     this._phone = '';
   }
 
-  validate(): { isValid: boolean; errors: Record<keyof IBuyer, string> } {
-    const errors: Record<keyof IBuyer, string> = {
-      payment: '',
-      address: '',
-      email: '',
-      phone: '',
-};
-
-    if (!this._payment) {
-      errors.payment = "Способ оплаты не выбран";
-    }
-
-    if (!this._address.trim()) {
-      errors.address = "Не указан адрес";
-    }
-
-    if (!this._email.trim()) {
-      errors.email = "Не указан E-mail";
-    } 
-
-    if (!this._phone.trim()) {
-      errors.phone = "Не указан телефон";
-    } 
+  validate(fieldsToCheck: string[]): { isValid: boolean; errors: string[] } {
+    let errors: string[] = [];
+    fieldsToCheck.forEach(field => {
+      switch(field) {
+        case("payment"): {
+          if (!this._payment) {
+            errors.push("Способ оплаты не выбран");
+          }
+          return;
+        }
+        case("address"): {
+          if (!this._address) {
+            errors.push("Не указан адрес");
+          }
+          return;
+        }
+        case("email"): {
+          if (!this._email) {
+            errors.push("Не указан E-mail");
+          }
+          return;
+        }
+        case("phone"):
+          if (!this._phone) {
+            errors.push("Не указан телефон");
+          }
+      }
+    });
 
     return {
       isValid: Object.values(errors).every(error => error === ''),

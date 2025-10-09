@@ -26,6 +26,13 @@ export interface IBuyer {
   address: string;         // Адрес доставки
 }
 
+export type IOrder = Omit<IBuyer, "payment"> & {
+  payment: TPayment;    // явно указываем
+  items: string[];      // массив ID товаров
+  total: number;        // общая сумма
+}
+
+
 export interface IOrderRequest extends IBuyer {
     total: number;
     items: string[];
