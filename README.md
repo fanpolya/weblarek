@@ -143,15 +143,14 @@ address: string; // Адрес доставки
 Не принимает параметров.
 
 Поля класса:
-• `products: IProduct[]` — массив всех товаров.
-• `selected: IProduct | null` — выбранный товар для подробного отображения.
+- `products: IProduct[]` — массив всех товаров.
+- `selected: IProduct | null` — выбранный товар для подробного отображения.
 
 Методы:
-• `setProducts(products: IProduct[]): void` — сохраняет массив товаров.
-• `getProducts(): IProduct[]` — возвращает список товаров.
-• `getProductById(id: string): IProduct | undefined` — возвращает товар по его id.
-• `setSelected(product: IProduct): void` — сохраняет выбранный товар.
-• `getSelected(): IProduct | null` — возвращает выбранный товар.
+- `setProducts(products: IProduct[]): void` — сохраняет массив товаров.
+- `getProducts(): IProduct[]` — возвращает список товаров.
+- `setSelected(product: IProduct): void` — сохраняет выбранный товар.
+- `getSelected(): IProduct | null` — возвращает выбранный товар.
 
 ⸻
 
@@ -163,16 +162,15 @@ address: string; // Адрес доставки
 Не принимает параметров.
 
 Поля класса:
-• `items: IProduct[]` — массив товаров в корзине.
+- `items: IProduct[]` — массив товаров в корзине.
 
 Методы:
-• `getItems(): IProduct[]` — возвращает все товары в корзине.
-• `addItem(product: IProduct): void` — добавляет товар.
-• `removeItem(productId: string): void` — удаляет товар по id.
-• `clear(): void` — очищает корзину.
-• `getTotal(): number` — возвращает общую стоимость всех товаров.
-• `getCount(): number` — возвращает количество товаров.
-• `hasItem(productId: string): boolean` — проверяет наличие товара по id.
+- `getItems(): IProduct[]` — возвращает все товары в корзине.
+- `addItem(product: IProduct): void` — добавляет товар.
+- `removeItem(productId: string): void` — удаляет товар по id.
+- `clear(): void` — очищает корзину.
+- `getTotal(): number` — возвращает общую стоимость всех товаров.
+- `getCount(): number` — возвращает количество товаров.
 
 ⸻
 
@@ -184,19 +182,19 @@ address: string; // Адрес доставки
 Не принимает параметров.
 
 Поля класса:
-• `private _payment: TPayment | null` — способ оплаты.
-• `private_address: string` — адрес доставки.
-• `private _email: string` — почта покупателя.
-• `private _phone: string` — телефон покупателя.
+- `private _payment: TPayment | null` — способ оплаты.
+- `private_address: string` — адрес доставки.
+- `private _email: string` — почта покупателя.
+- `private _phone: string` — телефон покупателя.
 
 Методы:
-• `setPayment(payment: TPayment)` - сохраняет данные покупателя о оплате.
-•	`setAddress(address: string)` - сохраняет данные покупателя об адресе доставки.
-•	`setEmail(email: string)` - сохраняет данные покупателя о email.
-•	`setPhone(phone: string)` — сохраняет данные покупателя о телефоне.
-• `getData(): IBuyer` — возвращает объект с данными покупателя.
-• `clear(): void`— очищает данные.
-• `validate(fieldsToCheck: string[]): { isValid: boolean; errors: string[] }` — проверяет корректность введённых данных.
+- `setPayment(payment: TPayment)` - сохраняет данные покупателя о оплате.
+-	`setAddress(address: string)` - сохраняет данные покупателя об адресе доставки.
+-	`setEmail(email: string)` - сохраняет данные покупателя о email.
+-	`setPhone(phone: string)` — сохраняет данные покупателя о телефоне.
+- `getData(): IBuyer` — возвращает объект с данными покупателя.
+- `clear(): void`— очищает данные.
+- `validate(fieldsToCheck: string[]): { isValid: boolean; errors: string[] }` — проверяет корректность введённых данных.
 
 ### Слой коммуникации
 

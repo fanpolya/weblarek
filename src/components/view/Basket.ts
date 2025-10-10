@@ -1,6 +1,6 @@
 import { ensureElement } from "../../utils/utils" 
 import { Component } from "../base/Component" 
-import { IEvents } from "../base/Events"
+import { EventEmitter } from "../base/Events"
 
 interface IBasketData {
   items: HTMLElement[];
@@ -13,7 +13,7 @@ export class Basket extends Component<IBasketData> {
   protected basketButtonOrderElement: HTMLButtonElement;
   protected basketPriceElement: HTMLElement;
 
-  constructor(protected events: IEvents, container: HTMLElement) {
+  constructor(protected events: EventEmitter, container: HTMLElement) {
     super(container)
     this.basketTitleElement = ensureElement<HTMLElement>('.modal__title', this.container);
     this.basketListElement = ensureElement<HTMLElement>('.basket__list', this.container);  

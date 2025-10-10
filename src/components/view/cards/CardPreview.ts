@@ -6,7 +6,7 @@ import { ensureElement } from "../../../utils/utils"
 export class CardPreview extends Card {
     protected description: HTMLElement;
     protected cardButtonElement: HTMLButtonElement;
-    private currentProduct: IProduct | null = null;
+    public currentProduct: IProduct | null = null;
 
     constructor(protected events: IEvents) {
       super(events, '#card-preview');

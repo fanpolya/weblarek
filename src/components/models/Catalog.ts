@@ -2,13 +2,14 @@ import { IProduct } from '../../types';
 import { EventEmitter } from '../base/Events';
 
 export class Catalog {
-  constructor(private events: EventEmitter) {}
-
   private products: IProduct[] = [];
   private selected: IProduct | null = null;
 
+  constructor(private events: EventEmitter) {}
+
   setProducts(products: IProduct[]): void {
     this.products = products;
+    this.events.emit('catalog:changed');
   }
 
   getProducts(): IProduct[] {

@@ -29,7 +29,7 @@ const events = new EventEmitter();
 // Модели данных
 const apiService = new ApiService(API_URL);
 const productsModel = new Catalog(events);
-const cart = new Cart();
+const cart = new Cart(events);
 const buyer = new Buyer();
 
 // Представления
@@ -38,15 +38,16 @@ const gallery = new Gallery(events, catalogContainer);
 const modal = new Modal(events);
 const header = new Header(events, ensureElement<HTMLElement>('.header'));
 const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
+let basketContainer = basketTemplate.content.cloneNode(true) as HTMLElement;
+let basket = new Basket(events, basketContainer);
 const orderForm = new OrderForm(events);
 const contactsForm = new ContactsForm(events);
 const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 let success = new Success(
-  events,
-  successTemplate.content.cloneNode(true) as HTMLElement
-);
+      events,
+      successTemplate.content.cloneNode(true) as HTMLElement
+    );
 
-let currentBasket: Basket;
 let currentPreview: CardPreview | null = null;
 
 // Рендер галереии
@@ -75,32 +76,35 @@ events.on('card:select', (product: IProduct) => {
 // Добавление в корзину
 events.on('card:toggle', (product: IProduct) => {
   const inBasket = cart.getItems().some((p) => p.id === product.id);
-  if (inBasket) {
-    cart.removeItem(product.id);
-  } else {
-    cart.addItem(product);
-  }
-  if (currentPreview) {
-    currentPreview.setInBasket(!inBasket);
-  }
+  inBasket ? events.emit('card:remove', product) : cart.addItem(product);
   events.emit("basket:changed");
 });
 
 // Обновление корзины
 events.on('basket:changed', () => {
   header.counter = cart.getCount();
-  if (currentBasket) {
-    const basketItems = cart.getItems().map((product, index) => {
-      return new CardBasket(events).render({ ...product, index });
-    });
-    currentBasket.items = basketItems;
-    currentBasket.total = cart.getTotal();
+  const basketItems = cart.getItems().map((product, index) => {
+    return new CardBasket(events).render({ ...product, index });
+  });
+  basket.items = basketItems;
+  basket.total = cart.getTotal();
+
+  if (currentPreview) {
+    let isExist: boolean = false;
+    cart.getItems().forEach((item) => {
+      if (item.id === currentPreview?.currentProduct?.id) {
+        isExist = true;
+      }
+    })
+    currentPreview.setInBasket(isExist);
   }
 });
 
 events.on('basket:open', () => {
-  const basketContainer = basketTemplate.content.cloneNode(true) as HTMLElement;
-  currentBasket = new Basket(events, basketContainer);
+  // нужно обновить контейнер, так как предыдуший эдемент был удален из дерева
+  // при закрытии модального окна
+  basketContainer = basketTemplate.content.cloneNode(true) as HTMLElement;
+  basket = new Basket(events, basketContainer);
   events.emit('basket:changed');
   modal.open(basketContainer);
 });
@@ -172,7 +176,7 @@ const validateSecondForm = () => {
   }
 };
 
-// Оплата и завершение заказа
+// Оплата и завершeние заказа
 events.on('contacts:submit', () => {
   const validation = buyer.validate(["phone", "email"]);
   if (validation.isValid) {
@@ -182,7 +186,6 @@ events.on('contacts:submit', () => {
       total: cart.getTotal(),
     };
     apiService.sendOrder(order).then((result: IOrderResponse) => {
-      console.log(success.render());
       success.total = result.total;
       modal.open(success.render());
       cart.clear();
@@ -191,11 +194,9 @@ events.on('contacts:submit', () => {
       orderForm.setSubmitEnabled(false);
       contactsForm.reset();
       contactsForm.setSubmitEnabled(false);
-      events.emit("basket:changed");
-
       success = new Success(
-        events,
-        successTemplate.content.cloneNode(true) as HTMLElement
+        events, 
+        successTemplate.content.cloneNode(true) as HTMLElement // нужно обновить контейнер, так как предыдуший элемент был удален из дерева при закрытии модального окна
       );
     });
   } else {
@@ -213,7 +214,6 @@ apiService
   .fetchProducts()
   .then((products) => {
     productsModel.setProducts(products);
-    events.emit('catalog:changed');
   })
   .catch((error) => {
     console.error('Ошибка при получении товаров:', error);
