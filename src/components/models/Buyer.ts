@@ -1,4 +1,5 @@
 import { IBuyer, TPayment } from '../../types';
+import { EventEmitter } from '../base/Events';
 
 export class Buyer {
   private _payment: TPayment | null = null;
@@ -6,20 +7,26 @@ export class Buyer {
   private _email: string = '';
   private _phone: string = '';
 
+  constructor(private events: EventEmitter) {}
+
   setPayment(payment: TPayment): void {
     this._payment = payment;
+    this.events.emit('buyer:changed:payment', { method: payment });
   }
 
   setAddress(address: string): void {
     this._address = address;
+    this.events.emit('buyer:changed:address', { value: address });
   }
 
   setEmail(email: string): void {
     this._email = email;
+    this.events.emit('buyer:changed:email', { value: email });
   }
 
   setPhone(phone: string): void {
     this._phone = phone;
+    this.events.emit('buyer:changed:phone', { value: phone });
   }
 
   getData(): IBuyer {
@@ -39,7 +46,7 @@ export class Buyer {
   }
 
   validate(fieldsToCheck: string[]): { isValid: boolean; errors: string[] } {
-    let errors: string[] = [];
+    const errors: string[] = [];
     fieldsToCheck.forEach(field => {
       switch(field) {
         case("payment"): {

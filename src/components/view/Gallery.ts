@@ -13,9 +13,7 @@ export class Gallery extends Component<IGalleryData> {
   render(data?: Partial<IGalleryData>): HTMLElement {
     this.container.innerHTML = ""; 
 
-    data?.items?.forEach((cardElement) => { 
-      this.container.appendChild(cardElement);
-    }); 
+    this.container.replaceChildren(...data.items);
     return this.container; 
   } 
 } 

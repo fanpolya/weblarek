@@ -34,4 +34,8 @@ export class Cart {
   getCount(): number {
     return this.items.length;
   }
+
+  hasItem(productId: string): boolean { 
+    return this.items.some((item) => item.id === productId); 
+  }
 }

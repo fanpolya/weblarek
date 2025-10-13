@@ -30,7 +30,7 @@ const events = new EventEmitter();
 const apiService = new ApiService(API_URL);
 const productsModel = new Catalog(events);
 const cart = new Cart(events);
-const buyer = new Buyer();
+const buyer = new Buyer(events);
 
 // Представления
 const catalogContainer = ensureElement<HTMLElement>('.gallery');
@@ -38,12 +38,12 @@ const gallery = new Gallery(events, catalogContainer);
 const modal = new Modal(events);
 const header = new Header(events, ensureElement<HTMLElement>('.header'));
 const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
-let basketContainer = basketTemplate.content.cloneNode(true) as HTMLElement;
-let basket = new Basket(events, basketContainer);
+const basketContainer = basketTemplate.content.cloneNode(true) as HTMLElement;
+const basket = new Basket(events, basketContainer);
 const orderForm = new OrderForm(events);
 const contactsForm = new ContactsForm(events);
 const successTemplate = ensureElement<HTMLTemplateElement>('#success');
-let success = new Success(
+const success = new Success(
       events,
       successTemplate.content.cloneNode(true) as HTMLElement
     );
@@ -89,24 +89,14 @@ events.on('basket:changed', () => {
   basket.items = basketItems;
   basket.total = cart.getTotal();
 
-  if (currentPreview) {
-    let isExist: boolean = false;
-    cart.getItems().forEach((item) => {
-      if (item.id === currentPreview?.currentProduct?.id) {
-        isExist = true;
-      }
-    })
-    currentPreview.setInBasket(isExist);
+  if (productsModel.setSelected) {
+    currentPreview?.setInBasket(cart.hasItem(productsModel.setSelected.id));
   }
 });
 
 events.on('basket:open', () => {
-  // нужно обновить контейнер, так как предыдуший эдемент был удален из дерева
-  // при закрытии модального окна
-  basketContainer = basketTemplate.content.cloneNode(true) as HTMLElement;
-  basket = new Basket(events, basketContainer);
-  events.emit('basket:changed');
-  modal.open(basketContainer);
+    events.emit('basket:changed');
+    modal.open(basket.render());
 });
 
 // Удаление из корзины
@@ -123,24 +113,19 @@ events.on('basket:order', () => {
 events.on('payment:select', (data: { method: string }) => {
   buyer.setPayment(data.method as TPayment);
   orderForm.setPaymentSelected(data.method);
-  validateFirstForm();
 });
 
 events.on('address:change', (data: { value: string }) => {
   buyer.setAddress(data.value);
-  validateFirstForm();
 });
 
 // Валидация формы адреса
 const validateFirstForm = () => {
   const validation = buyer.validate(["address", "payment"]);
-  const isValid = validation.isValid;
-  orderForm.setSubmitEnabled(isValid); 
-  if (!isValid) {
-    orderForm.setErrors(validation.errors.join(', '));
-  } else {
-    orderForm.clearErrors();
-  }
+  orderForm.setSubmitEnabled(validation.isValid);
+  validation.isValid
+    ? orderForm.clearErrors()
+    : orderForm.setErrors(validation.errors.join(', '));
 };
 
 // переход
@@ -157,24 +142,25 @@ events.on('order:submit', () => {
 
 events.on('contacts:email', (data: { value: string }) => {
   buyer.setEmail(data.value);
-  validateSecondForm();
 });
 
 events.on('contacts:phone', (data: { value: string }) => {
   buyer.setPhone(data.value);
-  validateSecondForm();
 });
 
 const validateSecondForm = () => {
   const validation = buyer.validate(["phone", "email"]);
-  const isValid = validation.isValid;
-  contactsForm.setSubmitEnabled(isValid);
-  if (!isValid) {
-    contactsForm.setErrors(validation.errors.join(', '));
-  } else {
-    contactsForm.clearErrors();
-  }
+  contactsForm.setSubmitEnabled(validation.isValid);
+  validation.isValid 
+    ? contactsForm.clearErrors()
+    : contactsForm.setErrors(validation.errors.join(', '));
 };
+
+// Изменения событий покупателя
+events.on('buyer:changed:address', validateFirstForm);
+events.on('buyer:changed:payment', validateFirstForm);
+events.on('buyer:changed:email', validateSecondForm);
+events.on('buyer:changed:phone', validateSecondForm);
 
 // Оплата и завершeние заказа
 events.on('contacts:submit', () => {
@@ -194,10 +180,10 @@ events.on('contacts:submit', () => {
       orderForm.setSubmitEnabled(false);
       contactsForm.reset();
       contactsForm.setSubmitEnabled(false);
-      success = new Success(
-        events, 
-        successTemplate.content.cloneNode(true) as HTMLElement // нужно обновить контейнер, так как предыдуший элемент был удален из дерева при закрытии модального окна
-      );
+    //   success = new Success(
+    //     events,
+    //     successTemplate.content.cloneNode(true) as HTMLElement // нужно обновить контейнер, так как предыдуший элемент был удален из дерева при закрытии модального окна
+    //   );
     });
   } else {
     contactsForm.setErrors(validation.errors.join(', '));
