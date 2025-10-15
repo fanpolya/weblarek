@@ -10,7 +10,7 @@ export class CardCatalog extends Card {
 
     this.container.addEventListener('click', () => {
     if (this.currentProduct) {
-      this.events.emit('card:select', this.currentProduct);
+      this.events.emit('product:select', this.currentProduct);
       }
     });
   } 

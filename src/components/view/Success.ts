@@ -9,14 +9,14 @@ export class Success extends Component<IOrderResponse> {
   protected description: HTMLElement;
   protected orderButtonCloseElement: HTMLButtonElement;
 
-  constructor(protected events: IEvents, container: HTMLElement) {
+  constructor(container: HTMLElement, protected events: IEvents) {
     super(container)
-    this.orderTitleElement = ensureElement<HTMLElement>('.order-success__title', this.container);
-    this.description = ensureElement<HTMLElement>('.order-success__description', this.container);  
-    this.orderButtonCloseElement = ensureElement<HTMLButtonElement>('.order-success__close', this.container);  
+    this.orderTitleElement = ensureElement<HTMLElement>('.order-success__title', container);
+    this.description = ensureElement<HTMLElement>('.order-success__description', container);  
+    this.orderButtonCloseElement = ensureElement<HTMLButtonElement>('.order-success__close', container);  
 
     this.orderButtonCloseElement.addEventListener('click', () => {
-    this.events.emit('success:close');
+      this.events.emit('success:close');
     });
   }
     set total(value: number) {

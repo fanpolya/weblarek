@@ -20,7 +20,7 @@ export class CardBasket extends Component<IProduct & { index?: number }> {
         if (this.currentProduct) {
           this.events.emit('card:remove', this.currentProduct);
         }
-        this.events.emit('basket:changed');
+        //this.events.emit('basket:changed');
       });
     }
 

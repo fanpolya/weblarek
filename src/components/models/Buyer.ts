@@ -1,4 +1,4 @@
-import { IBuyer, TPayment } from '../../types';
+import { IBuyer, TPayment, IValidationErrors } from '../../types';
 import { EventEmitter } from '../base/Events';
 
 export class Buyer {
@@ -11,22 +11,22 @@ export class Buyer {
 
   setPayment(payment: TPayment): void {
     this._payment = payment;
-    this.events.emit('buyer:changed:payment', { method: payment });
+    this.events.emit('buyer:changed', { field: 'payment' });
   }
 
   setAddress(address: string): void {
     this._address = address;
-    this.events.emit('buyer:changed:address', { value: address });
+    this.events.emit('buyer:changed', { field: 'address' });
   }
 
   setEmail(email: string): void {
     this._email = email;
-    this.events.emit('buyer:changed:email', { value: email });
+    this.events.emit('buyer:changed', { field: 'email' });
   }
 
   setPhone(phone: string): void {
     this._phone = phone;
-    this.events.emit('buyer:changed:phone', { value: phone });
+    this.events.emit('buyer:changed', { field: 'phone' });
   }
 
   getData(): IBuyer {
@@ -45,38 +45,25 @@ export class Buyer {
     this._phone = '';
   }
 
-  validate(fieldsToCheck: string[]): { isValid: boolean; errors: string[] } {
-    const errors: string[] = [];
-    fieldsToCheck.forEach(field => {
-      switch(field) {
-        case("payment"): {
-          if (!this._payment) {
-            errors.push("Способ оплаты не выбран");
-          }
-          return;
-        }
-        case("address"): {
-          if (!this._address) {
-            errors.push("Не указан адрес");
-          }
-          return;
-        }
-        case("email"): {
-          if (!this._email) {
-            errors.push("Не указан E-mail");
-          }
-          return;
-        }
-        case("phone"):
-          if (!this._phone) {
-            errors.push("Не указан телефон");
-          }
-      }
-    });
-
-    return {
-      isValid: Object.values(errors).every(error => error === ''),
-      errors,
-    };
+  validate(): IValidationErrors {
+    const errors: IValidationErrors = {};
+ 
+    if (!this._payment) {
+      errors.payment = "Способ оплаты не выбран"; 
+    }
+ 
+    if (!this._address.trim()) { 
+      errors.address = "Не указан адрес"; 
+    }
+ 
+    if (!this._email.trim()) { 
+      errors.email = "Не указан E-mail"; 
+    }
+ 
+    if (!this._phone.trim()) { 
+      errors.phone = "Не указан телефон"; 
+    }
+ 
+    return errors;
   }
 }
