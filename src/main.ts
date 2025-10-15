@@ -187,7 +187,7 @@ events.on('buyer:changed', (data: { field: string }) => {
           success.total = result.total;
         }
       })
-    .catch(errore => console.error('Ошибка оформления заказа:', errore))
+    .catch(error => console.error('Ошибка оформления заказа:', error))
   })
 
 // Закрытие заказа
