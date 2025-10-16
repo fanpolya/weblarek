@@ -364,7 +364,7 @@ src/components/view/
 - `protected formAddressInputElement: HTMLInputElement;` - поле адреса
 
 **Методы:**
--	`clearErrors()` — удаляет отображённое сообщение об ошибке.
+-	`clear(): void` — удаляет отображённое сообщение об ошибке.
 - `resetForm(): void` — сбрасывает состояние формы.
 - `togglePaymentButtonStatus(status: TPayment): void` — управляет активным состоянием кнопок выбора способа оплаты.
 - `checkValidation(errors: IValidationErrors): boolean` — проверяет валидность

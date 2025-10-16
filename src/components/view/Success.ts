@@ -19,7 +19,8 @@ export class Success extends Component<IOrderResponse> {
       this.events.emit('success:close');
     });
   }
-    set total(value: number) {
-      this.description.textContent = `Списано ${value} синапсов`;
-    }
+
+  set total(value: number) {
+    this.description.textContent = `Списано ${value} синапсов`;
+  }
 }

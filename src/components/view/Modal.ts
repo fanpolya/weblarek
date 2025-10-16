@@ -29,7 +29,6 @@ export class Modal extends Component<HTMLElement> {
   open(content: HTMLElement) {
     this.modalContentElement.replaceChildren(content);
     this.container.classList.add('modal_active');
-    // document.body.style.overflow = 'hidden';
   }
 
   close() {
