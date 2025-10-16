@@ -11,7 +11,7 @@ export class Basket extends Component<IBasketData> {
   protected basketTitleElement: HTMLElement; 
   protected basketListElement: HTMLElement; 
   protected basketButtonOrderElement: HTMLButtonElement; 
-  protected basketPriceElement: HTMLElement; 
+  protected basketPriceElement: HTMLElement;
  
   constructor(container: HTMLElement, protected events: EventEmitter) { 
     super(container) 
@@ -24,17 +24,20 @@ export class Basket extends Component<IBasketData> {
     this.events.emit('basket:order'); 
     }); 
   } 
-   
-    set items(value: HTMLElement[]) { 
-    if (value.length === 0) { 
-      this.basketListElement.innerHTML = 'Корзина пуста'; 
-      this.basketButtonOrderElement.disabled = true; 
-    } else { 
-      this.basketListElement.replaceChildren(...value); 
-      this.basketButtonOrderElement.disabled = false; 
-    } 
-} 
-    set total(value: number) { 
-      this.basketPriceElement.textContent = `${value} синапсов`; 
-    } 
+
+  set items(value: HTMLElement[]) {  
+    if (value.length === 0) {  
+      this.basketListElement.innerHTML = 'Корзина пуста';  
+      this.basketListElement.classList.add('basket__list-disabled');
+      this.basketButtonOrderElement.disabled = true;  
+    } else {  
+      this.basketListElement.replaceChildren(...value);  
+      this.basketListElement.classList.remove('basket__list-disabled');
+      this.basketButtonOrderElement.disabled = false;  
+    }  
+  }
+
+  set total(value: number) {  
+    this.basketPriceElement.textContent = `${value} синапсов`;  
+  }  
 } 

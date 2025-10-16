@@ -58,7 +58,7 @@ apiService
   })
   .catch((error) => {
     console.error('Ошибка при получении товаров:', error);
-  });
+  })
 
 // Рендер галереи
 events.on('catalog:changed', () => {
@@ -68,30 +68,30 @@ events.on('catalog:changed', () => {
     return card.render(product);
   });
   gallery.render({ catalog: cardElements });
-});
+})
 
-// Открываем карточку
+// Клик на карточку, запись данных в модель
 events.on('product:select', (product: IProduct) => {
   productsModel.setSelected(product);
-  const preview = new CardPreview(events);
-  const cardElement = preview.render(product);
-  const inBasket = cart.getItems().some((p) => p.id ===product.id);
-  preview.setInBasket(inBasket);
-  modal.open(cardElement);
-});
+})
 
-// Добавление в корзину
+// Отрисовка карточки
+events.on('catalog:selected', (product: IProduct) => {
+  const preview = new CardPreview(events);
+  preview.inBasket = cart.hasItem(product.id);
+  modal.open(preview.render(product));
+})
+
+// Добавление в корзину 
 events.on('card:toggle', (product: IProduct) => {
-  const inBasket = cart.getItems().some((p) => p.id === product.id);
+  const inBasket = cart.hasItem(product.id);
   if (!inBasket) {
-    cart.addItem(product);
-    modal.close();
+    cart.addItem(product)
   } else {
     cart.removeItem(product.id);
-    modal.close();
   }
-  events.emit("basket:changed");
-});
+  modal.close();
+})
 
 // Обновление корзины
 events.on('basket:changed', () => {
@@ -101,27 +101,22 @@ events.on('basket:changed', () => {
   });
   basket.items = renderedCards;
   basket.total = cart.getTotal();
-});
+})
 
 // Открытие корзины в хедере
 events.on('basket:open', () => {
-  const items = cart.getItems().map((product, index) => {
-    return new CardBasket(events).render({ ...product, index });
-  });
-  basket.items = items;
-  basket.total = cart.getTotal();
   modal.open(basket.render());
-});
+})
 
 // Удаление из корзины
 events.on('card:remove', (product: IProduct) => {
   cart.removeItem(product.id);
-});
+})
 
 // Кнопка "Оформить"
 events.on('basket:order', () => {
   modal.open(orderForm.render()); 
-});
+})
 
 // ФОРМЫ
 
@@ -133,22 +128,22 @@ events.on('payment:change', (data: { payment: TPayment }) => {
 // Ввод адреса
 events.on('address:change', (data: { address: string }) => {
   buyer.setAddress(data.address);
-});
+})
 
 // переход
 events.on('order:submit', () => {
   modal.content = contactsForm.render();
-});
+})
 
 // Ввод email
 events.on('contacts:email', (data: { email: string }) => {
   buyer.setEmail(data.email);
-});
+})
 
 // Ввод телефона
 events.on('contacts:phone', (data: { phone: string }) => {
   buyer.setPhone(data.phone);
-});
+})
 
 // Валидация
 events.on('buyer:changed', (data: { field: string }) => {
@@ -168,29 +163,29 @@ events.on('buyer:changed', (data: { field: string }) => {
 })
 
 // Оплата и завершeние заказа
-  events.on('contacts:submit', () => {
-    const orderData: IOrder = {
-      ...buyer.getData(),
-      items: cart.getItems().map((product) => product.id),
-      total: cart.getTotal(),
-    };
+events.on('contacts:submit', () => {
+  const orderData: IOrder = {
+    ...buyer.getData(),
+    items: cart.getItems().map((product) => product.id),
+    total: cart.getTotal(),
+  };
 
-    apiService.sendOrder(orderData)
-    .then(result => {
-        if (result) {
-          cart.clear();
-          buyer.clear();
-          header.counter = cart.getCount();
-          modal.content = success.render();
-          orderForm.resetForm();
-          contactsForm.resetForm();
-          success.total = result.total;
-        }
-      })
-    .catch(error => console.error('Ошибка оформления заказа:', error))
-  })
+  apiService.sendOrder(orderData)
+  .then(result => {
+      if (result) {
+        cart.clear();
+        buyer.clear();
+        header.counter = cart.getCount();
+        modal.content = success.render();
+        orderForm.resetForm();
+        contactsForm.resetForm();
+        success.total = result.total;
+      }
+    })
+  .catch(error => console.error('Ошибка оформления заказа:', error))
+})
 
 // Закрытие заказа
 events.on('success:close', () => {
   modal.close();
-});
+})
