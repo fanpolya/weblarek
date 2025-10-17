@@ -55,6 +55,7 @@ apiService
   .fetchProducts()
   .then((products) => {
     productsModel.setProducts(products);
+    cart.clear();
   })
   .catch((error) => {
     console.error('Ошибка при получении товаров:', error);
